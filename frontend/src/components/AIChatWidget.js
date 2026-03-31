@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Send, X, Bot, User, Sparkles, Heart, Star } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function AIChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +33,7 @@ export default function AIChatWidget() {
 
   const fetchPopularQuestions = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/chatbot/popular-questions');
+      const response = await api.get('/api/chatbot/popular-questions');
       setPopularQuestions(response.data.data);
     } catch (error) {
       console.error('Error fetching popular questions:', error);
@@ -59,7 +59,7 @@ export default function AIChatWidget() {
     setIsTyping(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chatbot/chat', {
+      const response = await api.post('/api/chatbot/chat', {
         message: message.trim(),
         userId: 'user_' + Date.now()
       });

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Calendar, MapPin, Clock, User, Scroll } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function AstrologySection() {
   const [activeTab, setActiveTab] = useState('rasi');
@@ -29,7 +29,7 @@ export default function AstrologySection() {
   const calculateRasiNakshatra = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/astrology/calculate', formData);
+      const response = await api.post('/api/astrology/calculate', formData);
       
       if (response.data.success) {
         setResult(response.data.data);
@@ -46,7 +46,7 @@ export default function AstrologySection() {
   const getHinduCalendar = async (date = new Date().toISOString().split('T')[0]) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/astrology/hindu-calendar', { 
+      const response = await api.post('/api/astrology/hindu-calendar', {
         date,
         placeOfBirth: formData.placeOfBirth || 'Delhi, India'
       });
@@ -81,7 +81,7 @@ export default function AstrologySection() {
         gotra: formData.gotra
       };
 
-      const response = await axios.post('http://localhost:5000/api/astrology/sankalpam', { 
+      const response = await api.post('/api/astrology/sankalpam', {
         profile,
         placeOfBirth: formData.placeOfBirth
       });

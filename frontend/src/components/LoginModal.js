@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, Mail, Lock, User, Phone, Calendar, MapPin, Clock } from 'lucide-react';
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { api } from '../lib/api';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -51,7 +49,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     setError('');
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, loginForm);
+      const response = await api.post('/api/auth/login', loginForm);
       
       if (response.data.success) {
         // Store token in localStorage
@@ -94,7 +92,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
     try {
       const { confirmPassword, ...registerData } = registerForm;
-      const response = await axios.post(`${API_URL}/api/auth/register`, registerData);
+      const response = await api.post('/api/auth/register', registerData);
       
       if (response.data.success) {
         // Store token in localStorage

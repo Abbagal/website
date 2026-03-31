@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Volume2, Clock, Star, Heart, BookOpen } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function SpecialMantrasSection() {
   const [mantras, setMantras] = useState([]);
@@ -28,7 +28,7 @@ export default function SpecialMantrasSection() {
 
   const fetchMantras = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/special-mantras');
+      const response = await api.get('/api/special-mantras');
       setMantras(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function SpecialMantrasSection() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/special-mantras/meta/categories');
+      const response = await api.get('/api/special-mantras/meta/categories');
       setCategories(response.data.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -48,7 +48,7 @@ export default function SpecialMantrasSection() {
 
   const fetchMantrasByCategory = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/special-mantras/category/${category}`);
+      const response = await api.get(`/api/special-mantras/category/${category}`);
       setMantras(response.data.data);
     } catch (error) {
       console.error('Error fetching mantras by category:', error);

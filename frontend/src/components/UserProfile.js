@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, LogOut, Settings, Star, Calendar, MapPin, Phone, Mail, Edit2, Save, X } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function UserProfile({ user, onLogout, onUpdateUser }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -49,8 +49,8 @@ export default function UserProfile({ user, onLogout, onUpdateUser }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(
-        'http://localhost:5000/api/auth/profile',
+      const response = await api.put(
+        '/api/auth/profile',
         profileData,
         {
           headers: {

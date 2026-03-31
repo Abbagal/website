@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Users, CheckCircle, Star, Flame, Heart, BookOpen, Play } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function QuickPujasSection() {
   const [pujas, setPujas] = useState([]);
@@ -28,7 +28,7 @@ export default function QuickPujasSection() {
 
   const fetchPujas = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/quick-pujas');
+      const response = await api.get('/api/quick-pujas');
       setPujas(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function QuickPujasSection() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/quick-pujas/meta/categories');
+      const response = await api.get('/api/quick-pujas/meta/categories');
       setCategories(response.data.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -48,7 +48,7 @@ export default function QuickPujasSection() {
 
   const fetchPujasByCategory = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/quick-pujas/category/${category}`);
+      const response = await api.get(`/api/quick-pujas/category/${category}`);
       setPujas(response.data.data);
     } catch (error) {
       console.error('Error fetching pujas by category:', error);

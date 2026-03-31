@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../lib/api';
 
 const AuthContext = createContext();
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
         
         // Set axios default header
         axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('token');
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, {
+      const response = await api.post('/api/auth/login', {
         email,
         password
       });
@@ -62,6 +63,7 @@ export const AuthProvider = ({ children }) => {
         
         // Set axios default header
         axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
+        api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
         
         return { success: true, user: userData };
       }
@@ -75,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, userData);
+      const response = await api.post('/api/auth/register', userData);
 
       if (response.data.success) {
         const { user: newUser, token: userToken } = response.data.data;
@@ -90,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         
         // Set axios default header
         axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
+        api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
         
         return { success: true, user: newUser };
       }
@@ -112,6 +115,7 @@ export const AuthProvider = ({ children }) => {
     
     // Remove axios default header
     delete axios.defaults.headers.common['Authorization'];
+    delete api.defaults.headers.common['Authorization'];
   };
 
   const updateUser = (updatedUser) => {

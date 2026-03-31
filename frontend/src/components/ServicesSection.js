@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Phone, Mail, User, Heart, Star, CheckCircle } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 export default function ServicesSection() {
   const [services, setServices] = useState([]);
@@ -25,7 +25,7 @@ export default function ServicesSection() {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/services');
+      const response = await api.get('/api/services');
       setServices(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -37,7 +37,7 @@ export default function ServicesSection() {
   const handleBooking = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/services/book', {
+      const response = await api.post('/api/services/book', {
         serviceId: selectedService.id,
         ...bookingForm
       });
