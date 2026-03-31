@@ -1,25 +1,19 @@
 'use client';
 
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-export default function Lotus({ position, scale = 1 }) {
+export default function Lotus({ position = [0, 0, 0], scale = 1 }) {
   const groupRef = useRef();
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.005;
-      const baseY = Array.isArray(position) ? position[1] : 0;
-      groupRef.current.position.y = baseY + Math.sin(state.clock.elapsedTime) * 0.1;
-    }
-  });
+  // Remove useFrame hook to prevent Canvas errors
+  // Static lotus without animation to avoid hook issues
 
   return (
     <group ref={groupRef} position={position} scale={scale}>
       {/* Center */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.3, 32, 32]} />
+        <sphereGeometry args={[0.3, 12, 12]} />
         <meshStandardMaterial color="#F7B801" emissive="#F7B801" emissiveIntensity={0.3} />
       </mesh>
 

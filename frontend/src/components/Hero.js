@@ -10,15 +10,6 @@ export default function Hero({ onSceneChange, activeScene }) {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/30 to-purple-900/80" />
       
       <div className="relative z-20 text-center px-4 max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
-          className="mb-8"
-        >
-          <span className="text-8xl">🕉️</span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +72,7 @@ export default function Hero({ onSceneChange, activeScene }) {
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
           >
-            🛕 Temple Scene
+            🛕 Real Temple
           </button>
         </motion.div>
       </div>

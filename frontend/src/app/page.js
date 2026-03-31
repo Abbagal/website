@@ -9,13 +9,16 @@ import DailyBlogs from '@/components/DailyBlogs';
 import Footer from '@/components/Footer';
 import LoadingScreen from '@/components/LoadingScreen';
 import Hero from '@/components/Hero';
+import AstrologySection from '@/components/AstrologySection';
+import ServicesSection from '@/components/ServicesSection';
+import SpecialMantrasSection from '@/components/SpecialMantrasSection';
+import QuickPujasSection from '@/components/QuickPujasSection';
+import CreatorLinksSection from '@/components/CreatorLinksSection';
+import AIChatWidget from '@/components/AIChatWidget';
+
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const Scene3D = dynamic(() => import('@/components/3d/Scene3D'), {
-  ssr: false,
-  loading: () => <LoadingScreen />
-});
-
-const TempleScene = dynamic(() => import('@/components/3d/TempleScene'), {
   ssr: false,
   loading: () => <LoadingScreen />
 });
@@ -30,9 +33,22 @@ export default function Home() {
       {/* Hero with 3D Background */}
       <section className="relative h-screen">
         <div className="absolute inset-0 z-0">
-          <Suspense fallback={<LoadingScreen />}>
-            {activeScene === 'om' ? <Scene3D /> : <TempleScene />}
-          </Suspense>
+          {activeScene === 'om' ? (
+            <ErrorBoundary>
+              <Suspense fallback={<LoadingScreen />}>
+                <Scene3D />
+              </Suspense>
+            </ErrorBoundary>
+          ) : (
+            <div className="relative w-full h-full">
+              <img 
+                src="/temple.jpeg" 
+                alt="Padmavati Devi Temple"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-purple-900/60"></div>
+            </div>
+          )}
         </div>
         <Hero onSceneChange={setActiveScene} activeScene={activeScene} />
       </section>
@@ -40,25 +56,42 @@ export default function Home() {
       {/* Interactive Features */}
       <Features />
 
+      <ServicesSection />
+
+      <SpecialMantrasSection />
+
+      <QuickPujasSection />
+
       {/* Mantras with Audio */}
       <MantrasSection />
+
+      {/* Vedic Astrology Section */}
+      <AstrologySection />
+
+      <CreatorLinksSection />
 
       {/* Daily Blogs Section */}
       <DailyBlogs />
 
-      {/* 3D Temple Experience */}
+      {/* Padmavati Temple with Real Image */}
       <section className="h-screen relative bg-gradient-to-b from-purple-900 to-indigo-900">
+        {/* Temple Background Image */}
         <div className="absolute inset-0">
-          <Suspense fallback={<LoadingScreen />}>
-            <TempleScene />
-          </Suspense>
+          <img 
+            src="/temple.jpeg" 
+            alt="Padmavati Devi Temple"
+            className="w-full h-full object-cover opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 via-transparent to-purple-900/80"></div>
         </div>
+        
         <div className="relative z-10 flex items-center justify-center h-full">
           <div className="text-center text-white">
-            <h2 className="text-5xl font-bold mb-4">🛕 Virtual Temple</h2>
-            <p className="text-xl mb-8">Experience divine darshan in 3D</p>
+            <h2 className="text-5xl font-bold mb-4">🛕 Padmavati Devi Temple</h2>
+            <p className="text-xl mb-4">Experience divine darshan</p>
+            <p className="text-lg mb-8 text-yellow-300">Sacred temple of Goddess Padmavati</p>
             <button className="bg-white/20 backdrop-blur px-8 py-3 rounded-full hover:bg-white/30 transition">
-              Enter Temple
+              Enter Sacred Temple
             </button>
           </div>
         </div>
@@ -83,6 +116,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      <AIChatWidget />
     </main>
   );
 }

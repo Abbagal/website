@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Logo.png</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background: #1a1a2e; 
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        canvas { 
+            border: 2px solid #FFD700; 
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .info {
+            background: rgba(255,215,0,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <h1>🕉️ Spiritual Logo Creator</h1>
+    
+    <div class="info">
+        <h3>Instructions:</h3>
+        <p>1. Click "Generate Logo" to create the logo</p>
+        <p>2. Click "Download PNG" to save as logo.png</p>
+        <p>3. Save the file as "logo.png" in your frontend/public/ folder</p>
+    </div>
+    
+    <canvas id="logoCanvas" width="200" height="60"></canvas>
+    <br><br>
+    <button onclick="generateLogo()">Generate Logo</button>
+    <button onclick="downloadLogo()">Download PNG</button>
+    <button onclick="clearCanvas()">Clear</button>
+    
+    <script>
+        const canvas = document.getElementById('logoCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function generateLogo() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background with gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            bgGradient.addColorStop(0, 'rgba(255,215,0,0.1)');
+            bgGradient.addColorStop(1, 'rgba(255,107,53,0.1)');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Create text gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, '#FFD700');
+            gradient.addColorStop(0.5, '#FFA500');
+            gradient.addColorStop(1, '#FF6B35');
+            
+            // Draw Om symbol background circle
+            ctx.beginPath();
+            ctx.arc(30, 30, 22, 0, 2 * Math.PI);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255,215,0,0.1)';
+            ctx.fill();
+            
+            // Draw Om symbol
+            ctx.font = 'bold 24px serif';
+            ctx.fillStyle = gradient;
+            ctx.textAlign = 'center';
+            ctx.fillText('ॐ', 30, 38);
+            
+            // Draw "Spiritual" text
+            ctx.font = 'bold 22px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = gradient;
+            ctx.fillText('Spiritual', 65, 38);
+            
+            // Add decorative elements
+            ctx.beginPath();
+            ctx.arc(180, 15, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FFD700';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(185, 30, 2, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FFA500';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(180, 45, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FF6B35';
+            ctx.fill();
+        }
+        
+        function downloadLogo() {
+            const link = document.createElement('a');
+            link.download = 'logo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // Auto-generate logo on page load
+        generateLogo();
+    </script>
+</body>
+</html>

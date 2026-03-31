@@ -107,7 +107,7 @@ export default function DailyBlogs() {
   };
 
   return (
-    <section ref={ref} className="min-h-screen bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-900 py-20 px-4">
+    <section id="blogs" ref={ref} className="min-h-screen bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-900 py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

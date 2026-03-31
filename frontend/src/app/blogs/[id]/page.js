@@ -38,18 +38,32 @@ export default function BlogDetailPage() {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       
+      console.log('Fetching blog with ID:', params.id);
+      console.log('API URL:', API_URL);
+      
       // Fetch main blog
       const response = await axios.get(`${API_URL}/api/blogs/${params.id}`);
-      setBlog(response.data.data);
+      console.log('Blog response:', response.data);
       
-      // Fetch related blogs
-      const relatedResponse = await axios.get(`${API_URL}/api/blogs?category=${response.data.data.category}&limit=3`);
-      const related = relatedResponse.data.data.filter(b => b.id !== parseInt(params.id));
-      setRelatedBlogs(related);
+      if (response.data.success && response.data.data) {
+        setBlog(response.data.data);
+        
+        // Fetch related blogs
+        try {
+          const relatedResponse = await axios.get(`${API_URL}/api/blogs?category=${response.data.data.category}&limit=3`);
+          const related = relatedResponse.data.data.filter(b => b.id !== parseInt(params.id));
+          setRelatedBlogs(related);
+        } catch (relatedError) {
+          console.warn('Error fetching related blogs:', relatedError);
+        }
+      } else {
+        console.error('Blog not found in response:', response.data);
+      }
       
       setLoading(false);
     } catch (error) {
       console.error('Error fetching blog:', error);
+      console.error('Error details:', error.response?.data);
       setLoading(false);
     }
   };

@@ -145,7 +145,7 @@ export default function MantrasSection() {
   const isInView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} className="min-h-screen bg-gradient-to-b from-purple-900 via-pink-900 to-purple-900 py-20 px-4">
+    <section id="mantras" ref={ref} className="min-h-screen bg-gradient-to-b from-purple-900 via-pink-900 to-purple-900 py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

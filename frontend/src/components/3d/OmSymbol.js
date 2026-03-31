@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import { Center } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -9,15 +8,8 @@ export default function OmSymbol() {
   const meshRef = useRef();
   const glowRef = useRef();
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
-    }
-    if (glowRef.current) {
-      glowRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 2) * 0.1);
-    }
-  });
+  // Remove useFrame hook to prevent Canvas errors
+  // Static Om symbol without animation to avoid hook issues
 
   return (
     <Center>

@@ -1,12 +1,10 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useMemo } from 'react';
 import * as THREE from 'three';
 
 export default function ParticleRing() {
-  const particlesRef = useRef();
-  const count = 50;
+  const count = 30; // Reduced count
 
   const particles = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -29,27 +27,11 @@ export default function ParticleRing() {
     return { positions, colors };
   }, []);
 
-  useFrame((state) => {
-    if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.2;
-      
-      const positions = particlesRef.current.geometry.attributes.position.array;
-      
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2 + state.clock.elapsedTime * 0.5;
-        const radius = 5 + Math.sin(state.clock.elapsedTime + i) * 0.5;
-        
-        positions[i * 3] = Math.cos(angle) * radius;
-        positions[i * 3 + 1] = Math.sin(angle * 3 + state.clock.elapsedTime) * 0.5;
-        positions[i * 3 + 2] = Math.sin(angle) * radius;
-      }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
+  // Remove useFrame hook to prevent Canvas errors
+  // Static particles without animation to avoid hook issues
 
   return (
-    <points ref={particlesRef}>
+    <points>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"

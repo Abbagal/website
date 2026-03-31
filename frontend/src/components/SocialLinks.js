@@ -1,36 +1,29 @@
 'use client';
 
-import { Youtube, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Youtube, Instagram, Music2 } from 'lucide-react';
 
 export default function SocialLinks({ className = '' }) {
   const socialLinks = [
     {
       name: 'YouTube',
-      url: 'https://youtube.com/@yourchannel',
+      url: process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://youtube.com/@yourchannel',
       icon: Youtube,
       color: 'hover:text-red-500',
       bgColor: 'hover:bg-red-500/20'
     },
     {
       name: 'Instagram',
-      url: 'https://instagram.com/yourusername',
+      url: process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://instagram.com/yourusername',
       icon: Instagram,
       color: 'hover:text-pink-500',
       bgColor: 'hover:bg-pink-500/20'
     },
     {
-      name: 'Facebook',
-      url: 'https://facebook.com/yourpage',
-      icon: Facebook,
-      color: 'hover:text-blue-500',
-      bgColor: 'hover:bg-blue-500/20'
-    },
-    {
-      name: 'Twitter',
-      url: 'https://twitter.com/yourusername',
-      icon: Twitter,
-      color: 'hover:text-sky-400',
-      bgColor: 'hover:bg-sky-400/20'
+      name: 'TikTok',
+      url: process.env.NEXT_PUBLIC_TIKTOK_URL || 'https://tiktok.com/@yourusername',
+      icon: Music2,
+      color: 'hover:text-cyan-300',
+      bgColor: 'hover:bg-cyan-400/20'
     }
   ];
 
