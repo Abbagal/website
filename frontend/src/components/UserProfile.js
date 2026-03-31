@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, LogOut, Settings, Star, Calendar, MapPin, Phone, Mail, Edit2, Save, X } from 'lucide-react';
 import { api } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function UserProfile({ user, onLogout, onUpdateUser }) {
+  const { logout } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -79,9 +81,8 @@ export default function UserProfile({ user, onLogout, onUpdateUser }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    await logout();
     onLogout();
     setShowProfile(false);
   };

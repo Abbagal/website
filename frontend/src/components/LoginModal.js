@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, Mail, Lock, User, Phone, Calendar, MapPin, Clock } from 'lucide-react';
-import { api } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,22 +50,16 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     setError('');
 
     try {
-      const response = await api.post('/api/auth/login', loginForm);
-      
-      if (response.data.success) {
-        // Store token in localStorage
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-        
-        // Call success callback
-        onLoginSuccess(response.data.data.user);
-        
-        // Close modal
-        onClose();
-        
-        // Reset form
-        setLoginForm({ email: '', password: '' });
+      const result = await login(loginForm.email, loginForm.password);
+
+      if (!result.success) {
+        setError(result.message || 'Login failed. Please try again.');
+        return;
       }
+
+      onLoginSuccess(result.user);
+      onClose();
+      setLoginForm({ email: '', password: '' });
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
@@ -92,31 +87,25 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
     try {
       const { confirmPassword, ...registerData } = registerForm;
-      const response = await api.post('/api/auth/register', registerData);
-      
-      if (response.data.success) {
-        // Store token in localStorage
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-        
-        // Call success callback
-        onLoginSuccess(response.data.data.user);
-        
-        // Close modal
-        onClose();
-        
-        // Reset form
-        setRegisterForm({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phone: '',
-          dateOfBirth: '',
-          placeOfBirth: '',
-          timeOfBirth: ''
-        });
+      const result = await register(registerData);
+
+      if (!result.success) {
+        setError(result.message || 'Registration failed. Please try again.');
+        return;
       }
+
+      onLoginSuccess(result.user);
+      onClose();
+      setRegisterForm({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phone: '',
+        dateOfBirth: '',
+        placeOfBirth: '',
+        timeOfBirth: ''
+      });
     } catch (error) {
       setError(error.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

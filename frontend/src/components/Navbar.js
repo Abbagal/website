@@ -1,42 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Menu, X, LogIn } from 'lucide-react';
 import SocialLinks from './SocialLinks';
 import LoginModal from './LoginModal';
 import UserProfile from './UserProfile';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
+  const { user, updateUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    }
-  }, []);
 
   const handleLoginSuccess = (userData) => {
-    setUser(userData);
+    updateUser(userData);
   };
 
-  const handleLogout = () => {
-    setUser(null);
-  };
+  const handleLogout = () => {};
 
   const handleUpdateUser = (updatedUser) => {
-    setUser(updatedUser);
+    updateUser(updatedUser);
   };
 
   return (

@@ -3,6 +3,14 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../lib/api';
+import { auth } from '../lib/firebase';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
 
 const AuthContext = createContext();
 
@@ -19,103 +27,84 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
 
+  const applySession = (userData, userToken) => {
+    setUser(userData);
+    setToken(userToken);
+    localStorage.setItem('token', userToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+    axios.defaults.headers.common.Authorization = `Bearer ${userToken}`;
+    api.defaults.headers.common.Authorization = `Bearer ${userToken}`;
+  };
+
+  const clearSession = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    delete axios.defaults.headers.common.Authorization;
+    delete api.defaults.headers.common.Authorization;
+  };
+
   useEffect(() => {
-    // Check if user is logged in on app start
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-        setToken(storedToken);
-        
-        // Set axios default header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        clearSession();
+        setLoading(false);
+        return;
       }
-    }
-    
-    setLoading(false);
+
+      try {
+        const userToken = await firebaseUser.getIdToken();
+        const response = await api.post('/api/auth/login', { authToken: userToken });
+        applySession(response.data.data.user, userToken);
+      } catch (error) {
+        console.error('Error restoring auth session:', error);
+        clearSession();
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await api.post('/api/auth/login', {
-        email,
-        password
-      });
-
-      if (response.data.success) {
-        const { user: userData, token: userToken } = response.data.data;
-        
-        // Store in state
-        setUser(userData);
-        setToken(userToken);
-        
-        // Store in localStorage
-        localStorage.setItem('token', userToken);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Set axios default header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-        api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-        
-        return { success: true, user: userData };
-      }
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const userToken = await credential.user.getIdToken();
+      const response = await api.post('/api/auth/login', { authToken: userToken });
+      applySession(response.data.data.user, userToken);
+      return { success: true, user: response.data.data.user };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed'
+        message: error.response?.data?.message || error.message || 'Login failed',
       };
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/api/auth/register', userData);
-
-      if (response.data.success) {
-        const { user: newUser, token: userToken } = response.data.data;
-        
-        // Store in state
-        setUser(newUser);
-        setToken(userToken);
-        
-        // Store in localStorage
-        localStorage.setItem('token', userToken);
-        localStorage.setItem('user', JSON.stringify(newUser));
-        
-        // Set axios default header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-        api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-        
-        return { success: true, user: newUser };
-      }
+      const credential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+      await updateProfile(credential.user, { displayName: userData.name });
+      const userToken = await credential.user.getIdToken(true);
+      const response = await api.post('/api/auth/register', {
+        authToken: userToken,
+        ...userData,
+      });
+      applySession(response.data.data.user, userToken);
+      return { success: true, user: response.data.data.user };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Registration failed'
+        message: error.response?.data?.message || error.message || 'Registration failed',
       };
     }
   };
 
-  const logout = () => {
-    // Clear state
-    setUser(null);
-    setToken(null);
-    
-    // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    
-    // Remove axios default header
-    delete axios.defaults.headers.common['Authorization'];
-    delete api.defaults.headers.common['Authorization'];
+  const logout = async () => {
+    await signOut(auth);
+    clearSession();
   };
 
   const updateUser = (updatedUser) => {
